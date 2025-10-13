@@ -87,7 +87,7 @@ export const axiosPost = async (url, locale, data, file, close) => {
 
     return { ...fetchData.data, status: true }
   } catch (err) {
-    console.log(err)
+    
     return { status: false, code: err?.response?.status }
   }
 }
