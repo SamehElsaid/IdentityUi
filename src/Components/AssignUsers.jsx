@@ -48,6 +48,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
   const [data, setData] = useState([])
   const [totalRows, setTotalRows] = useState(0)
   const [value, setValue] = useState('')
+
   const searchData = useRef({
     search: '',
     id: '',
@@ -70,6 +71,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
     if (!open) return
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
+
     const body = {
       pageNo: paginationModel.page + 1,
       pageSize: paginationModel.pageSize
@@ -173,6 +175,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
       }
     }
   ]
+
   const onSubmit = data => {
     setLoadingBtn(true)
     axiosPost(`Role/AssignUserToRolesAsync`, locale, {
@@ -189,7 +192,6 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
       .finally(() => {
         setLoadingBtn(false)
       })
-    // const formData = new FormData()
   }
 
   const formRef = useRef(null)
