@@ -1,0 +1,107 @@
+// ** Next Imports
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import 'react-phone-number-input/style.css'
+import 'react-datepicker/dist/react-datepicker.css'
+import 'keen-slider/keen-slider.min.css'
+import 'react-country-state-city/dist/react-country-state-city.css'
+import 'react-h5-audio-player/lib/styles.css'
+import { CacheProvider } from '@emotion/react'
+import themeConfig from 'src/configs/themeConfig'
+import UserLayout from 'src/layouts/UserLayout'
+import ThemeComponent from 'src/@core/theme/ThemeComponent'
+import NextProgress from 'nextjs-progressbar'
+import 'react-toastify/dist/ReactToastify.css'
+import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
+import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
+import 'prismjs'
+import 'prismjs/themes/prism-tomorrow.css'
+import 'prismjs/components/prism-jsx'
+import 'prismjs/components/prism-tsx'
+import 'react-perfect-scrollbar/dist/css/styles.css'
+import 'src/iconify-bundle/icons-bundle-react'
+import '../../styles/globals.css'
+import { Provider } from 'react-redux'
+import ar from '../../i18n/ar.json'
+import en from '../../i18n/en.json'
+import { IntlProvider } from 'react-intl'
+import { store } from 'src/store'
+import HomeApp from 'src/Components/HomeApp'
+import { cssTransition, ToastContainer } from 'react-toastify'
+import { useCookies } from 'react-cookie'
+import 'animate.css/animate.min.css'
+import 'video-react/dist/video-react.css'; 
+import 'suneditor/dist/css/suneditor.min.css'
+
+const clientSideEmotionCache = createEmotionCache()
+
+const message = {
+  en,
+  ar
+}
+
+const App = props => {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
+  const contentHeightFixed = Component.contentHeightFixed ?? false
+  const [mode, _] = useCookies(['mode'])
+
+  const getLayout =
+    Component.getLayout ?? (page => <UserLayout contentHeightFixed={contentHeightFixed}>{page}</UserLayout>)
+  const setConfig = Component.setConfig ?? undefined
+
+  const { locale } = useRouter()
+
+  const getDir = location => {
+    if (location !== 'ar') {
+      return 'ltr'
+    } else {
+      return 'rtl'
+    }
+  }
+
+  const bounce = cssTransition({
+    enter: 'animate__animated animate__bounceIn',
+    exit: 'animate__animated animate__bounceOut',
+  });
+
+  return (
+    <Provider store={store}>
+      <IntlProvider locale={locale} messages={message[locale]}>
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <title>{`${themeConfig.templateName} `}</title>
+            <meta name='description' content={`${themeConfig.templateName}`} />
+            <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
+            <meta name='viewport' content='initial-scale=1, width=device-width' />
+          </Head>
+          <div dir={getDir(locale)} className={getDir(locale)}>
+            <div className='bg-red-500'>
+              <NextProgress color='#ff593d' />
+            </div>
+            
+            <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+              <SettingsConsumer>
+                {({ settings }) => {
+                  return (
+                    <ThemeComponent settings={{ ...settings, direction: getDir(locale) }}>
+                      <ToastContainer
+                        className={`ToastContainer ${getDir(locale)}`}
+                        position='top-center'
+                        theme={settings.mode}
+                        transition={bounce}
+                      />
+
+                      <HomeApp>{getLayout(<Component {...pageProps} />)}</HomeApp>
+                    </ThemeComponent>
+                  )
+                }}
+              </SettingsConsumer>
+            </SettingsProvider>
+          </div>
+        </CacheProvider>
+      </IntlProvider>
+    </Provider>
+  )
+}
+
+export default App
