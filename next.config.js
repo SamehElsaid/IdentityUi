@@ -12,7 +12,7 @@ module.exports = {
     localeDetection: true
   },
   env: {
-    API_URL: 'https://localhost:7000/api'
+    API_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/api'
   },
   images: {
     domains: []
