@@ -208,7 +208,6 @@ function CreateClient({ open, handleClose, setReRender }) {
                   <CustomAutocomplete
                     multiple
                     value={value}
-                    // Exclude already selected roles
                     options={availableRoles}
                     label={messages.clientPage.roles}
                     id='autocomplete-fixed-option'
