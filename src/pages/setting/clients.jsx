@@ -61,12 +61,16 @@ function Clients() {
     if (searchData.current.clientId) {
       body.clientId = searchData.current.clientId
     }
-    axiosPost(`Client/ClinetsList`, locale, body)
+    axiosPost(`Client/ClientsWithAssignedRolesList`, locale, body)
       .then(res => {
         console.log(res)
         if (res.status) {
           setData(res.result.clients)
           setTotalRows(res.result.totalRecords)
+        }
+        else {
+          setData([])
+          setTotalRows(0)
         }
       })
       .finally(() => {
@@ -236,6 +240,46 @@ function Clients() {
         )
       }
     },
+
+    {
+      flex: 0.3,
+      minWidth: 200,
+      field: 'assignedRoles',
+      disableColumnMenu: true,
+      headerName: messages.clientPage.assignedRoles,
+      renderCell: ({ row }) => {
+        const maxVisible = 5
+        const users = row.assignedRoles || []
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
+            {users.slice(0, maxVisible).map((user, idx) => (
+              <Chip
+                key={user.id || idx}
+                size='small'
+                label={user.name}
+                sx={{ fontSize: '0.75rem', height: 24 }}
+              />
+            ))}
+            {users.length > maxVisible && (
+              <Tooltip
+                title={users
+                  .slice(maxVisible)
+                  .map(u => u.name)
+                  .join(', ')}
+              >
+                <Chip
+                  size='small'
+                  label={`+${users.length - maxVisible} more`}
+                  sx={{ fontSize: '0.75rem', height: 24, cursor: 'pointer' }}
+                />
+              </Tooltip>
+            )}
+          </Box>
+        )
+      }
+    },
+
     {
       flex: 0.2,
       minWidth: 300,

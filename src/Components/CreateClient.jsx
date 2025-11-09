@@ -109,18 +109,20 @@ function CreateClient({ open, handleClose, setReRender }) {
       setLoading(false)
     } else {
       if (typeof open === 'object') {
+        console.log("open")
+        console.log(open)
         setValue('displayName', open.displayName)
         setValue('clientId', open.clientId)
         setValue('clientSecret', open.clientSecret)
         setValue('redirectUris', open.redirectUris)
         setValue('postLogoutRedirectUris', open.postLogoutRedirectUris)
-        setValue('role', open.role)
+        setValue('roles', open.assignedRoles)
         trigger('displayName')
         trigger('clientId')
         trigger('clientSecret')
         trigger('redirectUris')
         trigger('postLogoutRedirectUris')
-        trigger('role')
+        trigger('roles')
       }
     }
   }, [open, reset, setValue, trigger])
@@ -195,31 +197,47 @@ function CreateClient({ open, handleClose, setReRender }) {
             name='roles'
             control={control}
             rules={{ required: true }}
-            render={({ field: { value, onChange } }) => (
-              <Box sx={{ position: 'relative', width: '100%', marginTop: 4 }}>
-                <CustomAutocomplete
-                  multiple
-                  value={value}
-                  options={roles}
-                  label={messages.clientPage.roles}
-                  id='autocomplete-fixed-option'
-                  getOptionLabel={option => option.name || ''}
-                  renderInput={params => <CustomTextField {...params} label={messages.clientPage.roles} />}
-                  onChange={(event, newValue) => {
-                    const uniqueValues = Array.from(new Set(newValue.map(item => JSON.stringify(item)))).map(item =>
-                      JSON.parse(item)
-                    )
-                    onChange(uniqueValues)
-                  }}
-                  renderTags={(tagValue, getTagProps) =>
-                    tagValue.map((option, index) => (
-                      <Chip label={option.name} color='primary' {...getTagProps({ index })} key={index} />
-                    ))
-                  }
-                />
-              </Box>
-            )}
+            render={({ field: { value, onChange } }) => {
+              // Filter out selected roles from the dropdown list
+              const availableRoles = roles.filter(
+                role => !value.some(selected => selected.id === role.id)
+              )
+
+              return (
+                <Box sx={{ position: 'relative', width: '100%', marginTop: 4 }}>
+                  <CustomAutocomplete
+                    multiple
+                    value={value}
+                    // Exclude already selected roles
+                    options={availableRoles}
+                    label={messages.clientPage.roles}
+                    id='autocomplete-fixed-option'
+                    getOptionLabel={option => option.name || ''}
+                    renderInput={params => (
+                      <CustomTextField {...params} label={messages.clientPage.roles} />
+                    )}
+                    onChange={(event, newValue) => {
+                      const uniqueValues = Array.from(
+                        new Set(newValue.map(item => JSON.stringify(item)))
+                      ).map(item => JSON.parse(item))
+                      onChange(uniqueValues)
+                    }}
+                    renderTags={(tagValue, getTagProps) =>
+                      tagValue.map((option, index) => (
+                        <Chip
+                          label={option.name}
+                          color='primary'
+                          {...getTagProps({ index })}
+                          key={index}
+                        />
+                      ))
+                    }
+                  />
+                </Box>
+              )
+            }}
           />
+
           <Controller
             name='clientId'
             control={control}

@@ -23,6 +23,7 @@ import ImageLoad from 'src/Components/ImageLoad'
 import { Icon } from '@iconify/react'
 import CreateRole from 'src/Components/CrateRole'
 import AssignUsers from 'src/Components/AssignUsers'
+import DeletePopUp from 'src/Components/DeletePopUp';
 
 function Roles() {
   const { messages, locale } = useIntl()
@@ -42,11 +43,14 @@ function Roles() {
     kind: ''
   })
 
+  const [deleteRoleId, setDeleteRoleId] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   useEffect(() => {
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
 
-    axiosGet(`Role/GetRoles/?pageNo=${paginationModel.page + 1}&pageSize${paginationModel.pageSize}`, locale)
+    axiosGet(`Role/GetRolesWithAssignedUsers/?pageNo=${paginationModel.page + 1}&pageSize${paginationModel.pageSize}`, locale)
       .then(res => {
         console.log(res)
         if (res.status) {
@@ -121,6 +125,40 @@ function Roles() {
           </Button>
         </Typography>
       )
+    },
+
+    {
+      flex: 0.3,
+      minWidth: 200,
+      field: 'assignedUsers',
+      disableColumnMenu: true,
+      headerName: messages.rolePage.assignedUsers,
+      renderCell: ({ row }) => {
+        const maxVisible = 5;
+        const users = row.assignedUsers || [];
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
+            {users.slice(0, maxVisible).map((user, idx) => (
+              <Chip
+                key={idx}
+                size='small'
+                label={user}
+                sx={{ fontSize: '0.75rem', height: 24 }}
+              />
+            ))}
+            {users.length > maxVisible && (
+              <Tooltip title={users.join(', ')}>
+                <Chip
+                  size='small'
+                  label={`+${users.length - maxVisible} more`}
+                  sx={{ fontSize: '0.75rem', height: 24, cursor: 'pointer' }}
+                />
+              </Tooltip>
+            )}
+          </Box>
+        )
+      }
     },
 
     {
@@ -234,42 +272,7 @@ function Roles() {
             <IconButton
               size='small'
               color='error'
-              onClick={() => {
-                setBlockOpen(params.row.id)
-                if (blockOpen !== params.row.id) {
-                  toast.info(messages.areYouSure, {
-                    position: locale === 'ar' ? 'bottom-left' : 'bottom-right',
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'colored',
-                    icon: <Icon icon='tabler:trash' />,
-                    iconColor: 'red',
-                    iconSize: 20,
-                    iconPosition: 'left',
-                    onClick: () => {
-                      const loadingToast = toast.loading(messages.userPage.loading + '...')
-                      axiosGet(`Role/DeleteRole?id=${params.row.id}`, 'en')
-                        .then(res => {
-                          if (res.status) {
-                            toast.success(messages.deletedSuccessfully)
-                            setRefresh(prev => prev + 1)
-                          }
-                        })
-                        .finally(() => {
-                          toast.dismiss(loadingToast)
-                          setBlockOpen(false)
-                        })
-                    },
-                    onClose: () => {
-                      setBlockOpen(false)
-                    }
-                  })
-                }
-              }}
+              onClick={() => setDeleteRoleId(params.row.id)}
             >
               <IconifyIcon icon='tabler:trash' />
             </IconButton>
@@ -452,6 +455,26 @@ function Roles() {
           </div>
         </Card>
       </Box>
+      <DeletePopUp
+        open={Boolean(deleteRoleId)}
+        setOpen={() => setDeleteRoleId(null)}
+        loadingButton={loadingDelete}
+        handleDelete={async () => {
+          setLoadingDelete(true);
+          try {
+            const res = await axiosGet(`Role/DeleteRole?id=${deleteRoleId}`, 'en');
+            if (res.status) {
+              toast.success(messages.deletedSuccessfully);
+              setRefresh(prev => prev + 1);
+            }
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setLoadingDelete(false);
+            setDeleteRoleId(null);
+          }
+        }}
+      />
     </div>
   )
 }

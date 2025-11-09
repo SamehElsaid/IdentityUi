@@ -77,7 +77,9 @@
     "roles": "الأدوار",
     "inactiveRole": "إلغاء تفعيل الدور",
     "editRole": "تعديل الدور",
-    "updateRole": "تعديل الدور"
+    "updateRole": "تعديل الدور",
+    "role": "الدور",
+    "assignedUsers": "المستخدمون المعينون"
   },
   "areYouSureEdit": "هل أنت متأكد أنك تريد تعديل هذا الدور؟",
   "userPage": {
@@ -111,6 +113,7 @@
     "createClient": "إنشاء عميل",
     "createClientSuccess": "تم إنشاء العميل بنجاح",
     "updateClientSuccess": "تم تعديل العميل بنجاح",
-    "roles": "الأدوار"
+    "roles": "الأدوار",
+    "assignedRoles": "الأدوار"
   }
 }

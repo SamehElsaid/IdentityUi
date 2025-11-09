@@ -77,7 +77,9 @@
     "areYouSureActiveRole": "Are you sure you want to active this role?",
     "areYouSureInactiveRole": "Are you sure you want to inactive this role?",
     "assignToUsers": "Assign To Users",
-    "assignToUsersSuccess": "Users assigned to role successfully"
+    "assignToUsersSuccess": "Users assigned to role successfully",
+    "role": "Role",
+    "assignedUsers": "Assigned Users"
   },
   "userPage": {
     "Users": "Users",
@@ -111,6 +113,7 @@
     "createClient": "Create Client",
     "createClientSuccess": "Client created successfully",
     "updateClientSuccess": "Client updated successfully",
-    "roles": "Roles"
+    "roles": "Roles",
+    "assignedRoles": "Roles"
   }
 }
