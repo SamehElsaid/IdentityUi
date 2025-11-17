@@ -121,7 +121,7 @@ function Users() {
                         !params.row.isActive ? messages.activeUser + '...' : messages.inactiveUser + '...'
                       )
                       axiosGet(
-                        `User/${params.row.isActive ? 'DactivateUser' : 'ActivateUser'}/?userId=${params.row.id}`,
+                        `User/${params.row.isActive ? 'DeactivateUser' : 'ActivateUser'}/?userId=${params.row.id}`,
                         'en'
                       )
                         .then(res => {

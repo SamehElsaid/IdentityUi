@@ -24,6 +24,7 @@ import { Icon } from '@iconify/react'
 import CreateRole from 'src/Components/CrateRole'
 import AssignUsers from 'src/Components/AssignUsers'
 import DeletePopUp from 'src/Components/DeletePopUp';
+import ConfirmRoleStatusPopup from 'src/Components/ConfirmRoleStatusPopup';
 
 function Roles() {
   const { messages, locale } = useIntl()
@@ -35,6 +36,10 @@ function Roles() {
   const [refresh, setRefresh] = useState(0)
   const [activeOpen, setActiveOpen] = useState(false)
   const [blockOpen, setBlockOpen] = useState(false)
+
+  const [roleStatusOpen, setRoleStatusOpen] = useState(false);
+  const [currentRole, setCurrentRole] = useState({ id: null, isActive: false });
+  const [loadingRoleStatus, setLoadingRoleStatus] = useState(false);
 
   const searchData = useRef({
     search: '',
@@ -50,7 +55,7 @@ function Roles() {
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
 
-    axiosGet(`Role/GetRolesWithAssignedUsers/?pageNo=${paginationModel.page + 1}&pageSize${paginationModel.pageSize}`, locale)
+    axiosGet(`Role/GetRolesWithAssignedUsers/?pageNo=${paginationModel.page + 1}&pageSize=${paginationModel.pageSize}`, locale)
       .then(res => {
         console.log(res)
         if (res.status) {
@@ -63,6 +68,27 @@ function Roles() {
         toast.dismiss(loadingToast)
       })
   }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+
+  const handleRoleStatusConfirm = async (roleId, newStatus) => {
+    setLoadingRoleStatus(true)
+    try {
+      const res = await axiosPost('Role/UpdateRoleStatus', 'en', {
+        roleId,
+        isActive: newStatus
+      })
+      if (res.status) {
+        toast.success(messages.rolePage.updateRoleSuccess)
+        setData(
+          data.map(item => (item.id === roleId ? { ...item, isActive: newStatus } : item))
+        )
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingRoleStatus(false)
+      setRoleStatusOpen(false)
+    }
+  }
 
   const columns = [
     {
@@ -134,7 +160,7 @@ function Roles() {
       disableColumnMenu: true,
       headerName: messages.rolePage.assignedUsers,
       renderCell: ({ row }) => {
-        const maxVisible = 5;
+        const maxVisible = 3;
         const users = row.assignedUsers || [];
 
         return (
@@ -148,7 +174,7 @@ function Roles() {
               />
             ))}
             {users.length > maxVisible && (
-              <Tooltip title={users.join(', ')}>
+              <Tooltip title={users.slice(maxVisible).join(', ')}>
                 <Chip
                   size='small'
                   label={`+${users.length - maxVisible} more`}
@@ -203,55 +229,8 @@ function Roles() {
               size='small'
               color={!params.row.isActive ? 'success' : 'warning'}
               onClick={() => {
-                setActiveOpen(params.row.id)
-                if (activeOpen !== params.row.id) {
-                  toast.info(
-                    !params.row.isActive
-                      ? messages.rolePage.areYouSureActiveRole
-                      : messages.rolePage.areYouSureInactiveRole,
-                    {
-                      position: locale === 'ar' ? 'bottom-left' : 'bottom-right',
-                      autoClose: 4000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      theme: 'colored',
-                      icon: <Icon icon='tabler:trash' />,
-                      iconColor: 'red',
-                      iconSize: 20,
-                      iconPosition: 'left',
-                      onClick: () => {
-                        const loadingToast = toast.loading(
-                          !params.row.isActive ? messages.activeUser + '...' : messages.inactiveUser + '...'
-                        )
-                        axiosPost(`Role/UpdateRoleStatus`, 'en', {
-                          roleId: params.row.id,
-                          isActive: !params.row.isActive
-                        })
-                          .then(res => {
-                            console.log(res)
-                            if (res.status) {
-                              toast.success(messages.rolePage.updateRoleSuccess)
-                              setData(
-                                data.map(item =>
-                                  item.id === params.row.id ? { ...item, isActive: !params.row.isActive } : item
-                                )
-                              )
-                            }
-                          })
-                          .finally(() => {
-                            toast.dismiss(loadingToast)
-                            setActiveOpen(false)
-                          })
-                      },
-                      onClose: () => {
-                        setActiveOpen(false)
-                      }
-                    }
-                  )
-                }
+                setCurrentRole({ id: params.row.id, isActive: params.row.isActive })
+                setRoleStatusOpen(true)
               }}
             >
               <IconifyIcon icon={params.row.isActive ? 'heroicons:lock-open' : 'heroicons:lock-closed'} />
@@ -292,11 +271,11 @@ function Roles() {
   const handleClose = () => {
     setOpen(false)
   }
-
+  
   return (
     <div>
       <CreateRole handleClose={handleClose} open={open} setReRender={setRefresh} />
-      <AssignUsers handleClose={handleAssignClose} setOpen={setAssignOpen} setRefresh={setRefresh} open={assignOpen} />
+      <AssignUsers handleClose={handleAssignClose} setOpen={setAssignOpen} open={assignOpen} />
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
           className='h-full flex flex-col sm:flex-row justify-between items-center gap-4'
@@ -474,6 +453,15 @@ function Roles() {
             setDeleteRoleId(null);
           }
         }}
+      />
+
+      <ConfirmRoleStatusPopup
+        open={roleStatusOpen}
+        onClose={() => setRoleStatusOpen(false)}
+        roleId={currentRole.id}
+        isActive={currentRole.isActive}
+        handleConfirm={handleRoleStatusConfirm}
+        loading={loadingRoleStatus}
       />
     </div>
   )

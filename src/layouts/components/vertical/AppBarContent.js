@@ -84,10 +84,9 @@ const AppBarContent = props => {
               textDecoration: 'none'
             }}
           >
-            {messages.logo}
+            <img src="/images/logo.png" alt="Logo" style={{ height: 60, width: 60 }}/>
           </Typography>
         </div>
-
         <div></div>
       </div>
     </Box>

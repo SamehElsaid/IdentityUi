@@ -2,7 +2,9 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { decryptData } from './encryption'
 import { toast } from 'react-toastify'
-import { saveAs } from 'file-saver'
+
+
+
 
 export const axiosGet = async (url, locale, token, params = {}, close) => {
   const authToken = Cookies.get('sub')
@@ -20,9 +22,7 @@ export const axiosGet = async (url, locale, token, params = {}, close) => {
     }
     const fetchData = await axios.get(`${process.env.API_URL}/${url}`, header)
 
-    // if (!fetchData.data.success) {
-    //   throw new Error(fetchData.data.message)
-    // }
+   
 
     return { ...fetchData.data, status: true }
   } catch (err) {
@@ -87,8 +87,6 @@ export const axiosPost = async (url, locale, data, file, close) => {
 
     return { ...fetchData.data, status: true }
   } catch (err) {
-    console.log(err)
-    
     return { status: false, code: err?.response?.status }
   }
 }

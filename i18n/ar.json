@@ -68,8 +68,6 @@
     "name": "الاسم",
     "createRole": "إنشاء دور",
     "createRoleSuccess": "تم إنشاء الدور بنجاح",
-    "areYouSureActiveRole": "هل أنت متأكد أنك تريد تفعيل هذا الدور؟",
-    "areYouSureInactiveRole": "هل أنت متأكد أنك تريد إلغاء تفعيل هذا الدور؟",
     "activeRole": "تفعيل الدور",
     "updateRoleSuccess": "تم تعديل الدور بنجاح",
     "assignToUsers": "تعيين مستخدمين",
@@ -79,7 +77,9 @@
     "editRole": "تعديل الدور",
     "updateRole": "تعديل الدور",
     "role": "الدور",
-    "assignedUsers": "المستخدمون المعينون"
+    "assignedUsers": "المستخدمون المعينون",
+    "activateRoleConfirmation": "هل أنت متأكد أنك تريد تفعيل هذا الدور؟",
+    "deactivateRoleConfirmation": "هل أنت متأكد أنك تريد إلغاء تفعيل هذا الدور؟"
   },
   "areYouSureEdit": "هل أنت متأكد أنك تريد تعديل هذا الدور؟",
   "userPage": {

@@ -6,13 +6,16 @@ import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
 import { styled, useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import control from 'src/Components/img/control-two.png'
-
 import Icon from 'src/@core/components/icon'
 
 // ** Configs
 import { svg } from 'src/Components/svg'
 import { useIntl } from 'react-intl'
+
+import logo from 'src/Components/img/logo-two.png'
+import logoEn from 'src/Components/img/logo-two-en.png'
+import logoDark from 'src/Components/img/logo-two-dark.png'
+import logoEnDark from 'src/Components/img/logo-two-en-dark.png'
 
 // ** Styled Components
 const MenuHeaderWrapper = styled(Box)(({ theme }) => ({
@@ -53,6 +56,7 @@ const VerticalNavHeader = props => {
 
   // ** Hooks & Vars
   const theme = useTheme()
+  
   const { navCollapsed } = settings
   const menuCollapsedStyles = navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 }
 
@@ -71,6 +75,9 @@ const VerticalNavHeader = props => {
   const MenuUnlockedIcon = () => userMenuUnlockedIcon || <Icon icon='tabler:circle' />
   const { messages } = useIntl()
 
+  const logoSrc = theme.palette?.mode === 'dark' 
+        ? messages === 'en' ? logoEnDark.src : logoDark.src : messages === 'en' ? logoEn.src : logo.src;
+
   return (
     <MenuHeaderWrapper className={`nav-header ${!navHover ? 'h_head' : 's_head'}`}>
       {userNavMenuBranding ? (
@@ -82,7 +89,9 @@ const VerticalNavHeader = props => {
             variant='h4'
             sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ms: 2.5, width: '100%' }) }}
           >
-            <div className='flex px-3'>{messages.logo}</div>
+            <div className='flex'>
+              <img className='logoControl' src={logoSrc} alt='logo' style={{ height: '50px' }} />
+            </div> 
           </HeaderTitle>
         </LinkStyled>
       )}

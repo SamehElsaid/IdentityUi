@@ -130,7 +130,7 @@ function CreateRole({ open, handleClose, setReRender }) {
               <Box sx={{ position: 'relative', width: '100%' }}>
                 <CustomTextField
                   fullWidth
-                  label={messages.userPage.name}
+                  label={<span>{messages.userPage.name} <small style={{ color: 'red' }}>*</small></span>}
                   className='capitalize'
                   value={value}
                   onChange={onChange}
