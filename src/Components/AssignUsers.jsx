@@ -47,6 +47,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
   const [data, setData] = useState([])
   const [totalRows, setTotalRows] = useState(0)
   const [selectedUsers, setSelectedUsers] = useState([]) // updated 
+
   const searchData = useRef({
     search: '', 
     id: '', 
@@ -69,6 +70,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
     if (!open) return 
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
+
     const body = {
       pageNo: paginationModel.page + 1,
       pageSize: paginationModel.pageSize
@@ -172,6 +174,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
     const onSubmit = () => { 
       if (!selectedUsers.length) { 
         toast.info('Please select at least one user') 
+
         return 
       } 
       
@@ -304,6 +307,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
                 data={data?.map((ele, i) => { 
                   const fData = { ...ele } 
                   fData.index = i + paginationModel.page * paginationModel.pageSize 
+                  
                   return fData 
                 })} 
                 totalRows={totalRows} 
