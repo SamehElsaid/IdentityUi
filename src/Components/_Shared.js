@@ -3,3 +3,8 @@ export const isArabic = (value, locale) => {
 
   return locale !== 'ar' ? arabicRegex.test(value) : !arabicRegex.test(value)
 }
+
+
+export const getDomain = () => {
+  return process.env.DEV_MODE ? 'http://localhost:3000/' : process.env.DOMAIN
+}
