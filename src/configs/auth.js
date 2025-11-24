@@ -1,3 +1,5 @@
+import { getDomain } from "src/Components/_Shared"
+
 const authSettings = {
   authority: process.env.IDENTITY_URL,
   client_id: 'SINGLECLIC.IDENTITY.UI',
