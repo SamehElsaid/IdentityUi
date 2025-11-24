@@ -15,7 +15,7 @@ module.exports = {
     API_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/api',
     IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
     DOMAIN: 'https://identity-ui-iota.vercel.app/',
-    DEV_MODE: true
+    DEV_MODE: false
   },
   images: {
     domains: []
