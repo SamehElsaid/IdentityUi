@@ -7,14 +7,11 @@ import { usePathname } from 'next/navigation'
 import { useTheme } from '@mui/material/styles'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { REMOVE_USER, SET_ACTIVE_USER } from 'src/store/apps/authSlice/authSlice'
-import { axiosGet, axiosPost, uploadImage } from './axiosCall'
+import { REMOVE_USER } from 'src/store/apps/authSlice/authSlice'
+import { axiosPost } from './axiosCall'
 import { useSettings } from 'src/@core/hooks/useSettings'
-import { SET_ACTIVE_LOADING } from 'src/store/apps/LoadingMainSlice/LoadingMainSlice'
 import LoadingMain from './LoadingMain'
-import { IconButton } from '@mui/material'
 import Cookies from 'js-cookie'
-import { LoadingButton } from '@mui/lab'
 import { decryptData } from './encryption'
 
 function HomeApp({ children }) {
@@ -44,7 +41,7 @@ function HomeApp({ children }) {
         saveSettings({
           ...settings,
           mode: cookies.mode,
-          themeColor: 'primary',
+          themeColor: 'error',
           skin: 'bordered',
           direction: locale === 'ar' ? 'rtl' : 'ltr'
         })
@@ -70,46 +67,9 @@ function HomeApp({ children }) {
   }, [])
 
   useEffect(() => {
-    if (cookies.sub) {
-      // Promise.all([axiosGet('auth/profile/', locale)])
-      //   .then(([resInfo]) => {
-      //     if (resInfo.status) {
-      //       dispatch(SET_ACTIVE_USER({ ...resInfo.results }))
-      //     } else {
-      //       throw new Error('')
-      //     }
-      //   })
-      //   .catch(err => {
-      //     removeCookie('sub', { path: '/' })
-      //     dispatch(REMOVE_USER())
-      //   })
-      //   .finally(_ => {
-      //     setTimeout(() => {
-      //       setLogin(false)
-      //       dispatch(SET_ACTIVE_LOADING())
-      //     }, 2000)
-      //   })
-
-      const userData = {
-        image_url: 'https://via.placeholder.com/150',
-        first_name: 'John',
-        last_name: 'Doe'
-      }
-      dispatch(SET_ACTIVE_USER(userData))
-      setTimeout(() => {
-        setLogin(false)
-        dispatch(SET_ACTIVE_LOADING())
-      }, 2000)
-    } else {
-      dispatch(REMOVE_USER())
-
-      const time = setTimeout(() => {
-        setLogin(false)
-        dispatch(SET_ACTIVE_LOADING())
-      }, 2000)
-
-      return () => clearTimeout(time)
-    }
+    removeCookie('sub', { path: '/' })
+    dispatch(REMOVE_USER())
+    setLogin(false)
   }, [])
   useEffect(() => {
     document.body.classList.toggle('rtl', locale === 'ar')
@@ -141,7 +101,7 @@ function HomeApp({ children }) {
   }
 
   useEffect(() => {
-    localStorage.clear()
+    // localStorage.clear()
   }, [])
 
   const [loading, setLoading] = useState(false)

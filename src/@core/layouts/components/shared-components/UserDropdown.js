@@ -31,6 +31,7 @@ import { Skeleton } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import ImageLoad from 'src/Components/ImageLoad'
 import { SET_ACTIVE_LOADING, SET_STOP_LOADING } from 'src/store/apps/LoadingMainSlice/LoadingMainSlice'
+import { getUser, logout } from 'src/services/AuthService'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -109,6 +110,8 @@ const UserDropdown = props => {
 
   const { locale, push } = useRouter()
   const patch = usePathname()
+  console.log(profile, "here");
+
   const theme = useTheme()
   useEffect(() => {
     setAnchorEl(null)
@@ -134,7 +137,7 @@ const UserDropdown = props => {
               </div>
 
               <Avatar
-                alt={profile?.first_name}
+                alt={profile?.name}
                 className='capitalize'
                 onClick={handleDropdownOpen}
                 sx={{ width: 38, height: 38 }}
@@ -147,7 +150,7 @@ const UserDropdown = props => {
                   <></>
                 ) : (
                   <>
-                    {profile?.first_name?.charAt(0)} {profile?.last_name?.charAt(0)}
+                    {profile?.name?.charAt(0)} {profile?.name?.charAt(1)}
                   </>
                 )}
               </Avatar>
@@ -172,7 +175,7 @@ const UserDropdown = props => {
                   }}
                 >
                   <Avatar
-                    alt={profile?.first_name}
+                    alt={profile?.name}
                     className='capitalize'
                     onClick={handleDropdownOpen}
                     sx={{ width: 38, height: 38 }}
@@ -180,19 +183,19 @@ const UserDropdown = props => {
                     {profile?.image_url && profile?.image_url !== '' ? (
                       <ImageLoad
                         src={profile?.image_url}
-                        alt={profile?.first_name}
+                        alt={profile?.name}
                         className='!w-full object-cover rounded-full'
                       />
                     ) : (
                       <>
-                        {profile?.first_name?.charAt(0)} {profile?.last_name?.charAt(0)}
+                        {profile?.name?.charAt(0)} {profile?.name?.charAt(1)}
                       </>
                     )}
                   </Avatar>
                 </Badge>
                 <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
                   <Typography className='uppercase' sx={{ fontWeight: 500 }}>
-                    {profile?.first_name} {profile?.last_name}
+                    {profile?.name} 
                   </Typography>
                   <Typography className='capitalize' variant='body2'>
                     {profile?.kind && profile?.kind}
@@ -209,7 +212,7 @@ const UserDropdown = props => {
             </MenuItemStyled>
 
             <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-            <MenuItemStyled sx={{ p: 0 }} onClick={handleLogout}>
+            <MenuItemStyled sx={{ p: 0 }} onClick={logout}>
               <Box sx={styles}>
                 <Icon icon='tabler:logout' />
                 {messages.signOut}

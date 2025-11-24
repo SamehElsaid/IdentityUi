@@ -1,9 +1,9 @@
+import { sendOAuthRequest } from 'src/services/AuthService'
 
 function setting() {
-  return (
-    <div>
 
-    </div>
+  return (
+    <></>
   )
 }
 

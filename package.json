@@ -76,6 +76,7 @@
     "next": "13.3.2",
     "nextjs-progressbar": "^0.0.16",
     "nprogress": "0.2.0",
+    "oidc-client-ts": "^3.4.1",
     "payment": "2.4.6",
     "prismjs": "1.29.0",
     "qrcode": "^1.5.3",
