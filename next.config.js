@@ -12,10 +12,11 @@ module.exports = {
     localeDetection: true
   },
   env: {
-    API_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/api',
-    IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
+    API_URL: 'https://localhost:7000/api',
+    IDENTITY_URL: 'https://localhost:7000/',
+    API_BASE_URL: 'https://localhost:7101/api',
     DOMAIN: 'https://identity-ui-iota.vercel.app/',
-    DEV_MODE: false
+    DEV_MODE: true
   },
   images: {
     domains: []

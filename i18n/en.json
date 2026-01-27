@@ -117,5 +117,11 @@
     "updateClientSuccess": "Client updated successfully",
     "roles": "Roles",
     "assignedRoles": "Roles"
+  },
+  "taskPage": {
+    "taskName": "Task Name",
+    "createTask": "Create Task",
+    "createTaskSuccess": "Task created successfully",
+    "tasks": "Tasks"
   }
 }

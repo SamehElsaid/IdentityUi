@@ -115,5 +115,11 @@
     "updateClientSuccess": "تم تعديل العميل بنجاح",
     "roles": "الأدوار",
     "assignedRoles": "الأدوار"
+  },
+  "taskPage": {
+    "taskName": "اسم المهمة",
+    "createTask": "إنشاء مهمة",
+    "createTaskSuccess": "تم إنشاء المهمة بنجاح",
+    "tasks": "المهام"
   }
 }

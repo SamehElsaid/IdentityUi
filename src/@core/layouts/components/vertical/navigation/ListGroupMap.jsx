@@ -13,6 +13,7 @@ import { HiUsers } from 'react-icons/hi'
 import { IoMdSettings } from 'react-icons/io'
 import { FaUsersViewfinder } from 'react-icons/fa6'
 import { GoHome } from 'react-icons/go'
+import { MdTask } from 'react-icons/md'
 
 const Navigation = () => {
   return [
@@ -34,12 +35,17 @@ const Navigation = () => {
       title_ar: 'المستخدمين',
       path: `setting/users`
     },
-
     {
       icon: <FaUsersViewfinder />,
       title_en: 'Clients',
       title_ar: 'العملاء',
       path: `setting/clients`
+    },
+    {
+      icon: <MdTask />,
+      title_en: 'Tasks',
+      title_ar: 'المهمات',
+      path: `setting/tasks`
     }
   ]
 }
