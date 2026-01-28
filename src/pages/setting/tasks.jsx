@@ -82,7 +82,11 @@ function Tasks() {
       minWidth: 180,
       field: 'createdAt',
       headerName: messages.userPage.createdAt,
-      renderCell: ({ row }) => <GetTimeinTable data={row.createdAt} />
+      renderCell: ({ row }) => (
+        <Typography variant="subtitle2">
+          {new Date(row.createdAt).toLocaleString(locale)}
+        </Typography>
+      )
     }
   ]
 
