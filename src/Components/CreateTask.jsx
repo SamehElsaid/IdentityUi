@@ -14,6 +14,7 @@ import { Icon } from '@iconify/react'
 function CreateTask({ open, handleClose, setReRender }) {
   const theme = useTheme()
   const { locale, messages } = useIntl()
+  const [paginationModel, setPaginationModel] = useState({ pageNo: 0, pageSize: 10 })
 
   const schema = yup.object().shape({
     name: yup.string().required(messages.required),
@@ -34,7 +35,14 @@ function CreateTask({ open, handleClose, setReRender }) {
   const [roles, setRoles] = useState([])
 
   useEffect(() => {
-    axiosGet(`Role/GetRoles/?pageNo=1&pageSize=200`, locale)
+    axiosPost(
+      `Role/GetRoles`, 
+      locale,
+      {
+        pageNo: paginationModel.pageNo + 1,
+        PageSize: paginationModel.pageSize
+      }
+    )
       .then(res => {
         if (res.status) setRoles(res.result.roles)
       })

@@ -55,7 +55,8 @@ function Roles() {
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
 
-    axiosGet(`Role/GetRolesWithAssignedUsers/?pageNo=${paginationModel.page + 1}&pageSize=${paginationModel.pageSize}`, locale)
+    axiosGet(
+      `Role/GetRolesWithAssignedUsers`, locale)
       .then(res => {
         console.log(res)
         if (res.status) {

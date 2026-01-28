@@ -14,6 +14,7 @@ import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 function CreateClient({ open, handleClose, setReRender }) {
   const theme = useTheme()
   const { locale, messages } = useIntl()
+  const [paginationModel, setPaginationModel] = useState({ pageNo: 0, pageSize: 10 })
 
   const schema = yup.object().shape({
     displayName: yup.string().required(messages.required),
@@ -133,7 +134,14 @@ function CreateClient({ open, handleClose, setReRender }) {
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
 
-    axiosGet(`Role/GetRoles/?pageNo=${1}&pageSize${200}`, locale)
+    axiosPost(
+      `Role/GetRoles`, 
+      locale,
+      {
+        pageNo: paginationModel.pageNo + 1,
+        PageSize: paginationModel.pageSize
+      }
+    )
       .then(res => {
         if (res.status) {
           setRoles(res.result.roles)
