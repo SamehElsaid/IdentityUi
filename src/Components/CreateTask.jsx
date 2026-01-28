@@ -28,7 +28,7 @@ function CreateTask({ open, handleClose, setReRender }) {
     formState: { errors }
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: { name: '', role: '' }
+    defaultValues: { name: '', role: null }
   })
 
   const [loading, setLoading] = useState(false)
@@ -126,7 +126,7 @@ function CreateTask({ open, handleClose, setReRender }) {
                 renderInput={params => (
                   <CustomTextField
                     {...params}
-                    label={messages.rolePage.roles}
+                    label={messages.rolePage.role}
                     error={Boolean(errors.role)}
                     helperText={errors.role?.message}
                   />
