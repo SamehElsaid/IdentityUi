@@ -22,15 +22,19 @@ function Tasks() {
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
 
-    fetch(`${process.env.API_BASE_URL}/task-type-lookup/get-all`, {
-      method: 'GET',
-      headers: { 'Accept-Language': locale }
+    fetch(`${process.env.API_BASE_URL}/task-type-lookup/get`, {
+      method: 'POST',
+      headers: {
+        'Accept-Language': locale,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
     })
       .then(res => res.json())
       .then(res => {
         if (res.isSuccess) {
-          setData(res.data)
-          setTotalRows(res.data.length)
+          setData(res.data?.taskTypeLookups ?? [])
+          setTotalRows(res.data?.totalCount ?? res.data?.taskTypeLookups?.length ?? 0)
         } else {
           setData([])
           setTotalRows(0)
@@ -46,6 +50,7 @@ function Tasks() {
         toast.dismiss(loadingToast)
       })
   }, [locale, refresh])
+
 
   const columns = [
     {
@@ -127,11 +132,11 @@ function Tasks() {
             <PagnationTable
               Invitationscolumns={columns}
               data={data.map((ele, i) => ({
-                id: `${ele.taskName}-${i}`,
+                id: ele.id,
                 index: i + paginationModel.page * paginationModel.pageSize,
-                name: ele.taskName,
-                role: ele.roleName,
-                createdAt: ele.createdAt 
+                name: ele.name,
+                role: ele.role ?? '-',
+                createdAt: ele.createdAt
               }))}
               totalRows={totalRows}
               getRowId={row => row.id}
