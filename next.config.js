@@ -11,6 +11,14 @@ module.exports = {
     defaultLocale: 'en',
     localeDetection: true
   },
+    env: {
+    API_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/api',
+    IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
+    API_BASE_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+    DOMAIN: 'https://identity-ui-iota.vercel.app/',
+    DEV_MODE: false
+  },
+  /*
   env: {
     API_URL: 'https://localhost:7000/api',
     IDENTITY_URL: 'https://localhost:7000/',
@@ -18,6 +26,7 @@ module.exports = {
     DOMAIN: 'https://identity-ui-iota.vercel.app/',
     DEV_MODE: true
   },
+  */
   images: {
     domains: []
   },
