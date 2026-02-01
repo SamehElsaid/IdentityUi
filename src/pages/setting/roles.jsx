@@ -1,26 +1,12 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Tooltip,
-  Typography
+import { Avatar, Button, Card, CardContent, Chip, IconButton, InputAdornment, MenuItem, Tooltip, Typography
 } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
-import CustomTextField from 'src/@core/components/mui/text-field'
 import { useIntl } from 'react-intl'
-import { LoadingButton } from '@mui/lab'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import IconifyIcon from 'src/Components/icon'
-import ImageLoad from 'src/Components/ImageLoad'
-import { Icon } from '@iconify/react'
 import CreateRole from 'src/Components/CrateRole'
 import AssignUsers from 'src/Components/AssignUsers'
 import DeletePopUp from 'src/Components/DeletePopUp';
@@ -40,13 +26,6 @@ function Roles() {
   const [roleStatusOpen, setRoleStatusOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState({ id: null, isActive: false });
   const [loadingRoleStatus, setLoadingRoleStatus] = useState(false);
-
-  const searchData = useRef({
-    search: '',
-    id: '',
-    email: '',
-    kind: ''
-  })
 
   const [deleteRoleId, setDeleteRoleId] = useState(null);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -68,7 +47,13 @@ function Roles() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+  }, [locale, refresh])
+
+  /* CLIENT-SIDE PAGINATION */
+  const pagedData = data.slice(
+    paginationModel.page * paginationModel.pageSize,
+    paginationModel.page * paginationModel.pageSize + paginationModel.pageSize
+  )
 
   const handleRoleStatusConfirm = async (roleId, newStatus) => {
     setLoadingRoleStatus(true)
@@ -277,6 +262,7 @@ function Roles() {
     <div>
       <CreateRole handleClose={handleClose} open={open} setReRender={setRefresh} />
       <AssignUsers handleClose={handleAssignClose} setOpen={setAssignOpen} open={assignOpen} />
+
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
           className='h-full flex flex-col sm:flex-row justify-between items-center gap-4'
@@ -298,133 +284,22 @@ function Roles() {
           </div>
         </CardContent>
       </Card>
+
       <div className='flex justify-end mb-5'>
         <Button variant='contained' color='success' onClick={() => setOpen(true)}>
           {messages.create}
         </Button>
       </div>
+
       <Box sx={{ mb: 4 }}>
         <Card className='flex gap-3 flex-wrap md:px-[36px] px-0' sx={{ mb: 6, width: '100%', py: '3.5rem' }}>
           <div className='w-full'>
-            {/* <form
-              ref={formRef}
-              onSubmit={e => {
-                e.preventDefault()
-
-                const noData = []
-
-                Object.keys(searchData.current).forEach(key => {
-                  if (searchData.current[key] !== '') {
-                    noData.push(true)
-                  }
-                })
-
-                if (noData.includes(true)) {
-                  setStartSearch(true)
-                  setPaginationModel({ page: 0, pageSize: 10 })
-                  setRefresh(prev => prev + 1)
-                } else {
-                  toast.info(messages.userPage.mustEnterSearchData)
-                }
-              }}
-              className='px-5 ~~ mb-5 ||'
-            >
-              <div className='flex md:flex-row flex-col w-full gap-5 '>
-                <CustomTextField
-                  name='search'
-                  className='w-full'
-                  fullWidth
-                  label={messages.userPage.name}
-                  defaultValue={searchData.current.search}
-                  onInput={e => {
-                    searchData.current.search = e.target.value
-                  }}
-                />
-                <CustomTextField
-                  name='id'
-                  className='w-full'
-                  fullWidth
-                  label={messages.userPage.userId}
-                  defaultValue={searchData.current.id}
-                  InputProps={{
-                    startAdornment: <InputAdornment position='end'>#</InputAdornment>
-                  }}
-                  onInput={e => {
-                    const value = e.target.value.replace('#', '')
-                    e.target.value = value
-                    searchData.current.id = value
-                  }}
-                />
-
-                <CustomTextField
-                  name='search'
-                  className='w-full'
-                  fullWidth
-                  type='email'
-                  label={messages.email}
-                  defaultValue={searchData.current.email}
-                  onInput={e => {
-                    searchData.current.email = e.target.value
-                  }}
-                />
-              </div>
-              <div className='flex md:flex-row flex-col w-full gap-5 mt-5 '>
-                {' '}
-                <CustomTextField
-                  select
-                  label={messages.userPage.status}
-                  fullWidth
-                  className='capitalize'
-                  value={searchData.current.kind ? searchData.current.kind : 'all'}
-                  onChange={e => {
-                    searchData.current.kind = e.target.value === 'all' ? '' : e.target.value
-                    setReRender(prev => prev + 1)
-                  }}
-                >
-                  <MenuItem value='all' checked selected>
-                    {messages.all}
-                  </MenuItem>
-                  <MenuItem value='active'>{messages.active}</MenuItem>
-                  <MenuItem value='inactive'>{messages.inactive}</MenuItem>
-                </CustomTextField>
-                <div className=' md:flex hidden w-full '></div>
-                <div className='md:flex hidden  w-full'></div>
-              </div>
-
-              <div className='flex gap-2 justify-end mt-5'>
-                <LoadingButton loading={loading} variant='contained' type='submit' name='search' color='success'>
-                  {messages.filter}
-                </LoadingButton>
-                {startSearch && (
-                  <LoadingButton
-                    loading={loading}
-                    onClick={() => {
-                      Object.keys(searchData.current).forEach(key => {
-                        searchData.current[key] = ''
-                      })
-                      setStartSearch(false)
-                      setPaginationModel({ page: 0, pageSize: 10 })
-                      setRefresh(prev => prev + 1)
-                      formRef.current.reset()
-                    }}
-                    variant='contained'
-                    type='button'
-                    color='error'
-                  >
-                    {messages.clearFilter}
-                  </LoadingButton>
-                )}
-              </div>
-            </form> */}
-
             <PagnationTable
               Invitationscolumns={columns}
-              data={data?.map((ele, i) => {
-                const fData = { ...ele }
-                fData.index = i + paginationModel.page * paginationModel.pageSize
-
-                return fData
-              })}
+              data={pagedData.map((row, i) => ({
+                ...row,
+                index: i + paginationModel.page * paginationModel.pageSize
+              }))}
               totalRows={totalRows}
               getRowId={row => row.id}
               loading={loading}
@@ -435,6 +310,7 @@ function Roles() {
           </div>
         </Card>
       </Box>
+      
       <DeletePopUp
         open={Boolean(deleteRoleId)}
         setOpen={() => setDeleteRoleId(null)}

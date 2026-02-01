@@ -35,14 +35,7 @@ function CreateTask({ open, handleClose, setReRender }) {
   const [roles, setRoles] = useState([])
 
   useEffect(() => {
-    axiosPost(
-      `Role/GetRoles`, 
-      locale,
-      {
-        pageNo: paginationModel.pageNo + 1,
-        PageSize: paginationModel.pageSize
-      }
-    )
+    axiosGet(`Role/GetRoles`, locale)
       .then(res => {
         if (res.status) setRoles(res.result.roles)
       })

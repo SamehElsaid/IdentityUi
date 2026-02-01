@@ -134,14 +134,7 @@ function CreateClient({ open, handleClose, setReRender }) {
     setLoading(true)
     const loadingToast = toast.loading(messages.userPage.loading)
 
-    axiosPost(
-      `Role/GetRoles`, 
-      locale,
-      {
-        pageNo: paginationModel.pageNo + 1,
-        PageSize: paginationModel.pageSize
-      }
-    )
+    axiosGet(`Role/GetRoles`, locale)
       .then(res => {
         if (res.status) {
           setRoles(res.result.roles)
