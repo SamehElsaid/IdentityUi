@@ -117,7 +117,7 @@
     "assignedRoles": "الأدوار"
   },
   "taskPage": {
-    "taskName": "اسم المهمة",
+    "taskName": "نوع المهمة",
     "createTask": "إنشاء مهمة",
     "editTask": "تعديل مهمة",
     "createTaskSuccess": "تم إنشاء المهمة بنجاح",

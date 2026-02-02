@@ -119,7 +119,7 @@
     "assignedRoles": "Roles"
   },
   "taskPage": {
-    "taskName": "Task Name",
+    "taskName": "Task Type",
     "createTask": "Create Task",
     "editTask": "Edit Task",
     "createTaskSuccess": "Task created successfully",
