@@ -1,9 +1,11 @@
-import { Avatar, Button, Card, CardContent, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useIntl } from 'react-intl'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
+import IconifyIcon from 'src/Components/icon'
+import DeletePopUp from 'src/Components/DeletePopUp';
 import CreateTask from 'src/Components/CreateTask'
 
 function Tasks() {
@@ -15,6 +17,9 @@ function Tasks() {
   const [totalRows, setTotalRows] = useState(0)
   const [refresh, setRefresh] = useState(0)
   const [open, setOpen] = useState(false)
+  const [currentTask, setCurrentTask] = useState(null)
+  const [deleteTaskId, setDeleteTaskId] = useState(null)
+  const [loadingDelete, setLoadingDelete] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -85,6 +90,37 @@ function Tasks() {
           {new Date(row.createdAt).toLocaleString(locale)}
         </Typography>
       )
+    },
+    {
+      flex: 0.1,
+      minWidth: 120,
+      field: 'action',
+      sortable: false,
+      headerName: messages.actions,
+      renderCell: params => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={messages.edit}>
+            <IconButton
+              size="small"
+              onClick={() => {
+                setCurrentTask(params.row)
+                setOpen(true)
+              }}
+            >
+              <IconifyIcon icon="lsicon:setting-filled" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={messages.delete}>
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => setDeleteTaskId(params.row.id)}
+            >
+              <IconifyIcon icon="tabler:trash" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )
     }
   ]
 
@@ -96,7 +132,15 @@ function Tasks() {
 
   return (
     <div>
-      <CreateTask open={open} handleClose={() => setOpen(false)} setReRender={setRefresh} />
+      <CreateTask
+        open={open}
+        handleClose={() => {
+          setOpen(false)
+          setCurrentTask(null)
+        }}
+        setReRender={setRefresh}
+        data={currentTask}
+      />
 
       <Card className="mb-5 py-4">
         <CardContent sx={{ py: '0 !important' }}>
@@ -110,7 +154,13 @@ function Tasks() {
       </Card>
 
       <div className="flex justify-end mb-5">
-        <Button variant="contained" color="success" onClick={() => setOpen(true)}>
+        <Button 
+          variant="contained" color="success" 
+          onClick={() => {
+            setCurrentTask(null)
+            setOpen(true)}
+          }
+        >
           {messages.create}
         </Button>
       </div>
@@ -132,6 +182,39 @@ function Tasks() {
           />
         </Card>
       </Box>
+
+      <DeletePopUp
+        open={Boolean(deleteTaskId)}
+        setOpen={() => setDeleteTaskId(null)}
+        loadingButton={loadingDelete}
+        handleDelete={async () => {
+          setLoadingDelete(true)
+          try {
+            const res = await fetch(
+              `${process.env.API_BASE_URL}/task-type-lookup/delete/${deleteTaskId}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'Accept-Language': locale
+                }
+              }
+            )
+
+            const result = await res.json()
+
+            if (result.isSuccess) {
+              toast.success(messages.deletedSuccessfully)
+              setRefresh(prev => prev + 1)
+            }
+          } catch (err) {
+            console.error(err)
+          } finally {
+            setLoadingDelete(false)
+            setDeleteTaskId(null)
+          }
+        }}
+      />
+
     </div>
   )
 }

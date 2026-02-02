@@ -119,7 +119,11 @@
   "taskPage": {
     "taskName": "اسم المهمة",
     "createTask": "إنشاء مهمة",
+    "editTask": "تعديل مهمة",
     "createTaskSuccess": "تم إنشاء المهمة بنجاح",
+    "updateTaskSuccess": "تم تجديد المهمة بنجاح",
+    "createTaskFailed": "فشل إنشاء مهمة",
+    "updateTaskFailed": "فشل تحديث المهمة",
     "tasks": "المهام"
   }
 }

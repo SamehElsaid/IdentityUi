@@ -121,7 +121,11 @@
   "taskPage": {
     "taskName": "Task Name",
     "createTask": "Create Task",
+    "editTask": "Edit Task",
     "createTaskSuccess": "Task created successfully",
+    "updateTaskSuccess": "Task updated successfully",
+    "createTaskFailed": "Failed to create Task",
+    "updateTaskFailed": "Faild to update Task",
     "tasks": "Tasks"
   }
 }
