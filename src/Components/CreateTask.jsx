@@ -89,10 +89,12 @@ function CreateTask({ open, handleClose, setReRender, data }) {
         }
 
         const text = await res.text()
+        
         return text ? JSON.parse(text) : { isSuccess: true }
       })
       .then(result => {
         if (!result) 
+          
           return;
 
         if (result.isSuccess) {
