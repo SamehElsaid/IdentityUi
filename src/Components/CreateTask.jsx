@@ -48,7 +48,8 @@ function CreateTask({ open, handleClose, setReRender, data }) {
   useEffect(() => {
     if (!open) {
       reset({ name: '', role: null })
-      return
+
+      return;
     }
 
     if (data && roles.length) {
@@ -83,6 +84,7 @@ function CreateTask({ open, handleClose, setReRender, data }) {
       .then(async res => {
         if (!res.ok) {
           toast.error(isEdit ? messages.taskPage.updateTaskFailed : messages.taskPage.createTaskFailed)
+
           return null
         }
 
@@ -90,7 +92,8 @@ function CreateTask({ open, handleClose, setReRender, data }) {
         return text ? JSON.parse(text) : { isSuccess: true }
       })
       .then(result => {
-        if (!result) return 
+        if (!result) 
+          return;
 
         if (result.isSuccess) {
           toast.success(
