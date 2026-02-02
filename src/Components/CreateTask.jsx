@@ -49,7 +49,7 @@ function CreateTask({ open, handleClose, setReRender, data }) {
     if (!open) {
       reset({ name: '', role: null })
 
-      return;
+      return
     }
 
     if (data && roles.length) {
@@ -82,20 +82,29 @@ function CreateTask({ open, handleClose, setReRender, data }) {
       })
     })
       .then(async res => {
+        const text = await res.text()
+        const data = text ? JSON.parse(text) : null
+
         if (!res.ok) {
-          toast.error(isEdit ? messages.taskPage.updateTaskFailed : messages.taskPage.createTaskFailed)
+          const apiMessage =
+            data?.message ||
+            data?.error ||
+            (isEdit
+              ? messages.taskPage.updateTaskFailed
+              : messages.taskPage.createTaskFailed)
+
+          toast.error(apiMessage)
 
           return null
         }
 
-        const text = await res.text()
-        
-        return text ? JSON.parse(text) : { isSuccess: true }
+        return data
       })
+
       .then(result => {
         if (!result) 
           
-          return;
+          return
 
         if (result.isSuccess) {
           toast.success(
