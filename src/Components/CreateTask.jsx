@@ -55,7 +55,7 @@ function CreateTask({ open, handleClose, setReRender, data }) {
     if (data && roles.length) {
       setValue('name', data.name)
 
-      const selectedRole = roles.find(r => r.name === data.role)
+      const selectedRole = roles.find(r => r.id === data.role)
       setValue('role', selectedRole || null)
     }
   }, [open, data, roles, reset, setValue])
@@ -78,7 +78,7 @@ function CreateTask({ open, handleClose, setReRender, data }) {
       },
       body: JSON.stringify({
         name: formData.name,
-        role: formData.role.name
+        role: formData.role.id
       })
     })
       .then(async res => {

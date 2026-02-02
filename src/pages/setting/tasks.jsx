@@ -3,9 +3,10 @@ import { Box } from '@mui/system'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useIntl } from 'react-intl'
+import { axiosGet } from 'src/Components/axiosCall'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import IconifyIcon from 'src/Components/icon'
-import DeletePopUp from 'src/Components/DeletePopUp';
+import DeletePopUp from 'src/Components/DeletePopUp'
 import CreateTask from 'src/Components/CreateTask'
 
 function Tasks() {
@@ -20,6 +21,32 @@ function Tasks() {
   const [currentTask, setCurrentTask] = useState(null)
   const [deleteTaskId, setDeleteTaskId] = useState(null)
   const [loadingDelete, setLoadingDelete] = useState(false)
+
+  const [roleNameMap, setRoleNameMap] = useState({})
+
+  const fetchRoleNameById = async roleId => {
+    if (!roleId) 
+      
+      return
+
+    if (roleNameMap[roleId] || !roleId.includes('-')) 
+      
+      return
+
+    try {
+      const res = await axiosGet(`Role/GetRoleName/${roleId}`, locale)
+      const roleName = res?.result
+
+      if (roleName) {
+        setRoleNameMap(prev => ({
+          ...prev,
+          [roleId]: roleName
+        }))
+      }
+    } catch (err) {
+      console.error('Failed to fetch role name', err)
+    }
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -40,8 +67,13 @@ function Tasks() {
       .then(res => {
         if (res.isSuccess) {
           const list = res.data?.taskTypeLookups ?? []
+
           setData(list)
           setTotalRows(list.length)
+
+          list.forEach(task => {
+            fetchRoleNameById(task.role)
+          })
         } else {
           setData([])
           setTotalRows(0)
@@ -78,7 +110,9 @@ function Tasks() {
       headerName: messages.rolePage.role,
       flex: 1,
       renderCell: ({ row }) => (
-        <Typography sx={{ fontWeight: 500 }}>{row.role}</Typography>
+        <Typography sx={{ fontWeight: 500 }}>
+          {roleNameMap[row.role] || row.role || '—'}
+        </Typography>
       )
     },
     {
@@ -124,7 +158,7 @@ function Tasks() {
     }
   ]
 
-  /* CLIENT-SIDE PAGINATION */
+  /* Client-side pagination */
   const pagedData = data.slice(
     paginationModel.page * paginationModel.pageSize,
     paginationModel.page * paginationModel.pageSize + paginationModel.pageSize
@@ -154,12 +188,13 @@ function Tasks() {
       </Card>
 
       <div className="flex justify-end mb-5">
-        <Button 
-          variant="contained" color="success" 
+        <Button
+          variant="contained"
+          color="success"
           onClick={() => {
             setCurrentTask(null)
-            setOpen(true)}
-          }
+            setOpen(true)
+          }}
         >
           {messages.create}
         </Button>
@@ -214,7 +249,6 @@ function Tasks() {
           }
         }}
       />
-
     </div>
   )
 }
