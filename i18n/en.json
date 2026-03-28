@@ -3,6 +3,7 @@
   "required": "This Filed is required",
   "actions": "actions",
   "reset": "Reset",
+  "maxLength": "This field must be less than 255 characters",
   "next": "Next",
   "back": "Back",
   "submit": "Submit",
@@ -96,7 +97,15 @@
     "areYouSureBlock": "Are you sure you want to block this user?",
     "areYouSureEdit": "Are you sure you want to edit this role?",
     "blockUser": "Block User",
-    "mustEnterSearchData": "You must enter search data"
+    "mustEnterSearchData": "You must enter search data",
+    "createNewUser": "Create new user",
+    "organization": "Organization",
+    "selectOrganization": "Select organization",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordsMustMatch": "Passwords must match",
+    "createUserSuccess": "User created successfully",
+    "createUserFailed": "Failed to create user"
   },
   "clientPage": {
     "clientInfo": "Client Info",
@@ -105,6 +114,8 @@
     "clientSecret": "Client Secret",
     "clientId": "Client Id",
     "createdById": "Created By",
+    "activeClient": "Active Client",
+    "inactiveClient": "Inactive Client",
     "createdAt": "Created At",
     "Clients": "Clients",
     "activeClientSuccess": "Client active successfully",

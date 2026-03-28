@@ -1,8 +1,13 @@
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -10,8 +15,11 @@ import {
   Typography
 } from '@mui/material'
 import { Box } from '@mui/system'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useRef, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import * as yup from 'yup'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useIntl } from 'react-intl'
@@ -20,6 +28,189 @@ import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import IconifyIcon from 'src/Components/icon'
 import ImageLoad from 'src/Components/ImageLoad'
 import { Icon } from '@iconify/react'
+import { useSelector } from 'react-redux'
+
+const createUserDefaultValues = {
+  firstName: '',
+  organization: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+}
+
+function CreateUserDialog({ open, onClose, locale, messages, onSuccess }) {
+  const [submitting, setSubmitting] = useState(false)
+
+  const ORGANIZATION_OPTIONS = [
+    { value: 'gahar', label: 'Gahar' },
+    { value: 'Miahona', label: 'Miahona' }
+  ]
+
+  const schema = yup.object().shape({
+    firstName: yup.string().required(messages.required),
+    organization: yup
+      .string()
+      .required(messages.required)
+      .oneOf(
+        ORGANIZATION_OPTIONS.map(o => o.value),
+        messages.required
+      ),
+    email: yup.string().email(messages.ie).required(messages.required),
+    password: yup.string().required(messages.required).min(6, messages.least6),
+    confirmPassword: yup
+      .string()
+      .required(messages.required)
+      .oneOf([yup.ref('password')], messages.userPage.passwordsMustMatch)
+  })
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm({
+    defaultValues: createUserDefaultValues,
+    mode: 'onChange',
+    resolver: yupResolver(schema)
+  })
+
+  useEffect(() => {
+    if (open) {
+      reset(createUserDefaultValues)
+    }
+  }, [open, reset])
+
+  const user = useSelector(state => state.auth.data)
+
+  console.log(user, "user")
+
+  const onSubmit = data => {
+    setSubmitting(true)
+    const loadingToast = toast.loading(messages.userPage.loading)
+    axiosPost(
+      'Account/Register',
+      locale,
+      {
+        firstName: data.firstName,
+        organization: data.organization,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        CreatedBy: user.email
+      }
+    )
+      .then(res => {
+        if (res.status) {
+          toast.success(messages.userPage.createUserSuccess)
+          onClose()
+          onSuccess()
+        } 
+      })
+      .finally(() => {
+        setSubmitting(false)
+        toast.dismiss(loadingToast)
+      })
+  }
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
+      <DialogTitle>{messages.userPage.createNewUser}</DialogTitle>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
+            <Controller
+              name='firstName'
+              control={control}
+              render={({ field }) => (
+                <CustomTextField
+                  {...field}
+                  fullWidth
+                  label={messages.userPage.name}
+                  error={Boolean(errors.firstName)}
+                  {...(errors.firstName && { helperText: errors.firstName.message })}
+                />
+              )}
+            />
+            <Controller
+              name='organization'
+              control={control}
+              render={({ field }) => (
+                <CustomTextField
+                  {...field}
+                  select
+                  fullWidth
+                  className='capitalize'
+                  label={messages.userPage.organization}
+                  error={Boolean(errors.organization)}
+                  {...(errors.organization && { helperText: errors.organization.message })}
+                >
+                  <MenuItem value='' disabled>
+                    <em>{messages.userPage.selectOrganization}</em>
+                  </MenuItem>
+                  {ORGANIZATION_OPTIONS.map(opt => (
+                    <MenuItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </MenuItem>
+                  ))}
+                </CustomTextField>
+              )}
+            />
+            <Controller
+              name='email'
+              control={control}
+              render={({ field }) => (
+                <CustomTextField
+                  {...field}
+                  fullWidth
+                  type='email'
+                  label={messages.email}
+                  error={Boolean(errors.email)}
+                  {...(errors.email && { helperText: errors.email.message })}
+                />
+              )}
+            />
+            <Controller
+              name='password'
+              control={control}
+              render={({ field }) => (
+                <CustomTextField
+                  {...field}
+                  fullWidth
+                  type='password'
+                  label={messages.userPage.password}
+                  error={Boolean(errors.password)}
+                  {...(errors.password && { helperText: errors.password.message })}
+                />
+              )}
+            />
+            <Controller
+              name='confirmPassword'
+              control={control}
+              render={({ field }) => (
+                <CustomTextField
+                  {...field}
+                  fullWidth
+                  type='password'
+                  label={messages.userPage.confirmPassword}
+                  error={Boolean(errors.confirmPassword)}
+                  {...(errors.confirmPassword && { helperText: errors.confirmPassword.message })}
+                />
+              )}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button variant='tonal' color='secondary' onClick={onClose} type='button'>
+            {messages.cancel}
+          </Button>
+          <LoadingButton loading={submitting} variant='contained' color='primary' type='submit'>
+            {messages.create}
+          </LoadingButton>
+        </DialogActions>
+      </form>
+    </Dialog>
+  )
+}
 
 function Users() {
   const { messages, locale } = useIntl()
@@ -31,6 +222,7 @@ function Users() {
   const [refresh, setRefresh] = useState(0)
   const [activeOpen, setActiveOpen] = useState(false)
   const [blockOpen, setBlockOpen] = useState(false)
+  const [createUserOpen, setCreateUserOpen] = useState(false)
 
   const searchData = useRef({
     search: '',
@@ -293,8 +485,18 @@ function Users() {
               {totalRows}
             </Avatar>
           </div>
+          <Button variant='contained' color='primary' startIcon={<Icon icon='tabler:user-plus' />} onClick={() => setCreateUserOpen(true)}>
+            {messages.userPage.createNewUser}
+          </Button>
         </CardContent>
       </Card>
+      <CreateUserDialog
+        open={createUserOpen}
+        onClose={() => setCreateUserOpen(false)}
+        locale={locale}
+        messages={messages}
+        onSuccess={() => setRefresh(prev => prev + 1)}
+      />
       <Box sx={{ mb: 4 }}>
         <Card className='flex gap-3 flex-wrap md:px-[36px] px-0' sx={{ mb: 6, width: '100%', py: '3.5rem' }}>
           <div className='w-full'>

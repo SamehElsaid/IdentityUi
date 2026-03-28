@@ -19,9 +19,9 @@ import { useIntl } from 'react-intl'
 import { LoadingButton } from '@mui/lab'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import IconifyIcon from 'src/Components/icon'
-import { Icon } from '@iconify/react'
 import GetTimeinTable from 'src/Components/GetTimeinTable'
 import CreateClient from 'src/Components/CreateClient'
+import ConfirmPopup from 'src/Components/ConfirmPopup'
 
 function Clients() {
   const { messages, locale } = useIntl()
@@ -31,7 +31,7 @@ function Clients() {
   const [totalRows, setTotalRows] = useState(0)
   const [startSearch, setStartSearch] = useState(false)
   const [refresh, setRefresh] = useState(0)
-  const [activeOpen, setActiveOpen] = useState(false)
+  const [toggleClientRow, setToggleClientRow] = useState(null)
   const [open, setOpen] = useState(false)
 
   const searchData = useRef({
@@ -77,6 +77,7 @@ function Clients() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
 
   const columns = [
@@ -97,63 +98,16 @@ function Clients() {
       flex: 0.1,
       minWidth: 100,
       field: 'action',
+      hideable: false,
       sortable: false,
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={!params.row.isActive ? messages.activeUser : messages.inactiveUser}>
+          <Tooltip title={!params.row.isActive ? messages.clientPage.activeClient : messages.clientPage.inactiveClient}>
             <IconButton
               size='small'
               color={!params.row.isActive ? 'success' : 'warning'}
-              onClick={() => {
-                setActiveOpen(params.row.id)
-                if (activeOpen !== params.row.id) {
-                  toast.info(!params.row.isActive ? messages.areYouSureActive : messages.areYouSureInactive, {
-                    position: locale === 'ar' ? 'bottom-left' : 'bottom-right',
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'colored',
-                    icon: <Icon icon='tabler:trash' />,
-                    iconColor: 'red',
-                    iconSize: 20,
-                    iconPosition: 'left',
-                    onClick: () => {
-                      const loadingToast = toast.loading(
-                        !params.row.isActive ? messages.activeUser + '...' : messages.inactiveUser + '...'
-                      )
-                      axiosGet(
-                        `Client/${params.row.isActive ? 'DactivateClient' : 'ActivateClient'}/?clientId=${
-                          params.row.id
-                        }`,
-                        'en'
-                      )
-                        .then(res => {
-                          if (res.status) {
-                            toast.success(
-                              !params.row.isActive ? messages.activeClientSuccess : messages.inactiveClientSuccess
-                            )
-                            setData(
-                              data.map(item =>
-                                item.id === params.row.id ? { ...item, isActive: !params.row.isActive } : item
-                              )
-                            )
-                          }
-                        })
-                        .finally(() => {
-                          toast.dismiss(loadingToast)
-                          setActiveOpen(false)
-                        })
-                    },
-                    onClose: () => {
-                      setActiveOpen(false)
-                    }
-                  })
-                }
-              }}
+              onClick={() => setToggleClientRow(params.row)}
             >
               <IconifyIcon icon='ant-design:user-switch-outlined' />
             </IconButton>
@@ -205,6 +159,7 @@ function Clients() {
       minWidth: 300,
       field: 'name.firstName',
       disableColumnMenu: true,
+      sortable: false,
       headerName: messages.clientPage.clientInfo,
       renderCell: ({ row }) => {
         return (
@@ -232,6 +187,8 @@ function Clients() {
       field: 'clientId',
       disableColumnMenu: true,
       headerName: messages.clientPage.clientId,
+      sortable: false,
+
       renderCell: ({ row }) => {
         return (
           <Typography variant='subtitle2' sx={{ fontWeight: 500 }}>
@@ -246,6 +203,8 @@ function Clients() {
       minWidth: 200,
       field: 'assignedRoles',
       disableColumnMenu: true,
+      sortable: false,
+
       headerName: messages.clientPage.assignedRoles,
       renderCell: ({ row }) => {
         const maxVisible = 5
@@ -388,6 +347,43 @@ function Clients() {
 
   return (
     <div>
+      <ConfirmPopup
+        open={Boolean(toggleClientRow)}
+        onClose={() => setToggleClientRow(null)}
+        title={messages.areYouSure}
+        message={
+          toggleClientRow
+            ? !toggleClientRow.isActive
+              ? messages.areYouSureActive
+              : messages.areYouSureInactive
+            : ''
+        }
+        confirmText={messages.yes}
+        cancelText={messages.cancel}
+        confirmColor={toggleClientRow && !toggleClientRow.isActive ? 'success' : 'warning'}
+        onConfirm={async () => {
+          if (!toggleClientRow) {
+            return
+          }
+          const row = toggleClientRow
+          try {
+            const res = await axiosGet(
+              `Client/${row.isActive ? 'DactivateClient' : 'ActivateClient'}/?id=${row.id}`,
+              locale
+            )
+            if (res.status) {
+              
+
+              toast.success(!row.isActive ? messages.clientPage.activeClientSuccess : messages.clientPage.inactiveClientSuccess)
+              setData(prev =>
+                prev.map(item => (item.id === row.id ? { ...item, isActive: !row.isActive } : item))
+              )
+            }
+          } finally {
+            setToggleClientRow(null)
+          }
+        }}
+      />
       <CreateClient handleClose={handleClose} open={open} setReRender={setRefresh} />
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent

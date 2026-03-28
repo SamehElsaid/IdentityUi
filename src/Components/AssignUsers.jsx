@@ -66,6 +66,8 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
     })
   }
 
+
+  console.log(selectedUsers, "selectedUsers", open)
   useEffect(() => {
     if (!open) return 
     setLoading(true)
@@ -91,6 +93,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, open])
 
   const handleCheckboxChange = (event, userIds) => {
@@ -186,6 +189,7 @@ export default function AssignUsers({ open, setOpen, setRefresh }) {
       .then(res => { 
         if (res.status) { 
           toast.success(messages.rolePage.assignToUsersSuccess) 
+          setRefresh(prev => prev + 1)
           close() 
         } 
       })

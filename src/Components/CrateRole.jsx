@@ -1,13 +1,13 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Icon } from '@iconify/react'
-import { Box, Button, Drawer, IconButton, MenuItem, useTheme } from '@mui/material'
+import { Box, Button, Drawer,  useTheme } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
-import { axiosGet, axiosPost } from './axiosCall'
+import { axiosGet } from './axiosCall'
 import { useIntl } from 'react-intl'
 
 function CreateRole({ open, handleClose, setReRender }) {
@@ -15,7 +15,7 @@ function CreateRole({ open, handleClose, setReRender }) {
   const { locale, messages } = useIntl()
 
   const schema = yup.object().shape({
-    name: yup.string().required(messages.required)
+    name: yup.string().required(messages.required).max(255, messages.maxLength)
   })
 
   const [loading, setLoading] = useState(false)
@@ -52,7 +52,7 @@ function CreateRole({ open, handleClose, setReRender }) {
     if (typeof open === 'object') {
       axiosGet(`Role/UpdateRole?roleId=${open.id}&newRoleName=${sendData.name}`, 'en')
         .then(res => {
-          if (res.status) {
+          if (res.status && res.success) {
             toast.success(messages.rolePage.updateRoleSuccess)
             handleClose()
             setReRender(prev => prev + 1)
@@ -92,7 +92,7 @@ function CreateRole({ open, handleClose, setReRender }) {
         trigger('name')
       }
     }
-  }, [open, reset])
+  }, [open, reset, setValue, trigger])
 
   return (
     <Drawer

@@ -1,4 +1,5 @@
-import { Avatar, Button, Card, CardContent, Chip, IconButton, InputAdornment, MenuItem, Tooltip, Typography
+import {
+  Avatar, Button, Card, CardContent, Chip, IconButton, InputAdornment, MenuItem, Tooltip, Typography
 } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useRef, useState } from 'react'
@@ -18,10 +19,7 @@ function Roles() {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([])
   const [totalRows, setTotalRows] = useState(0)
-  const [startSearch, setStartSearch] = useState(false)
   const [refresh, setRefresh] = useState(0)
-  const [activeOpen, setActiveOpen] = useState(false)
-  const [blockOpen, setBlockOpen] = useState(false)
 
   const [roleStatusOpen, setRoleStatusOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState({ id: null, isActive: false });
@@ -47,7 +45,7 @@ function Roles() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, refresh])
+  }, [locale, messages, refresh])
 
   /* CLIENT-SIDE PAGINATION */
   const pagedData = data.slice(
@@ -257,11 +255,11 @@ function Roles() {
   const handleClose = () => {
     setOpen(false)
   }
-  
+
   return (
     <div>
       <CreateRole handleClose={handleClose} open={open} setReRender={setRefresh} />
-      <AssignUsers handleClose={handleAssignClose} setOpen={setAssignOpen} open={assignOpen} />
+      <AssignUsers handleClose={handleAssignClose} setOpen={setAssignOpen} setRefresh={setRefresh} open={assignOpen} />
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
@@ -310,7 +308,7 @@ function Roles() {
           </div>
         </Card>
       </Box>
-      
+
       <DeletePopUp
         open={Boolean(deleteRoleId)}
         setOpen={() => setDeleteRoleId(null)}
