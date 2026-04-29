@@ -12,9 +12,9 @@ module.exports = {
     localeDetection: true
   },
     env: {
-    API_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/api',
-    IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
-    API_BASE_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+    API_URL: 'https://cortextest.singleclic.com/IdentityServer/api',
+    IDENTITY_URL: 'https://cortextest.singleclic.com/IdentityServer/',
+    API_BASE_URL: 'https://cortextest.singleclic.com/LowCode/api',
     DOMAIN: 'https://identity-ui-iota.vercel.app/',
     DEV_MODE: false
   },
