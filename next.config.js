@@ -14,7 +14,7 @@ module.exports = {
   env: {
     API_URL: 'https://cortextest.singleclic.com/identityServerFRA/api',
     IDENTITY_URL: 'https://cortextest.singleclic.com/identityServerFRA/',
-    API_BASE_URL: 'https://cortextest.singleclic.com/LowCode/api/',
+    API_BASE_URL: 'https://cortextest.singleclic.com/LowCode/api',
     DOMAIN: 'https://identity-ui-iota.vercel.app/',
     DEV_MODE: false
   },
